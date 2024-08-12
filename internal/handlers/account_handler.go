@@ -14,6 +14,13 @@ type accountHandler struct {
 	accountService services.AccountService
 }
 
+func NewAccountHandler(db *sql.DB) *accountHandler {
+	return &accountHandler{
+		db:             db,
+		accountService: *services.NewAccountService(db),
+	}
+}
+
 func (a *accountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	var accountReq structures.AccountRequest
 	if err := httpbs.ValidateErr(w, json.NewDecoder(r.Body).Decode(&accountReq), http.StatusBadRequest); err != nil {

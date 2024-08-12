@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"BlueSoftBank/internal/database"
+	"BlueSoftBank/internal/handlers"
 	"net/http"
 )
 
@@ -9,9 +10,12 @@ func main() {
 	// create a new mux router
 	mux := http.NewServeMux()
 
-	mux.HandleFunc(http.MethodGet+" api/accounts", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello World from accounts")
-	})
+	db, err := database.CreateConnection()
+	if err != nil {
+		panic(err)
+	}
+	accountHandlers := handlers.NewAccountHandler(db)
+	mux.HandleFunc(http.MethodGet+" api/accounts", accountHandlers.CreateAccount)
 
 	// start the server
 	if err := http.ListenAndServe(":8080", mux); err != nil {
