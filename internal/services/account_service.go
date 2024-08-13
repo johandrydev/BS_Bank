@@ -2,19 +2,25 @@ package services
 
 import (
 	"BlueSoftBank/internal/models"
+	"BlueSoftBank/internal/repositories"
 	"context"
 	"database/sql"
-	"fmt"
 )
 
+type AccountCreator interface {
+	CreateAccount(ctx context.Context, account *models.Account) error
+}
+
 type AccountService struct {
-	db *sql.DB
+	accountRepo AccountCreator
 }
 
 func NewAccountService(db *sql.DB) *AccountService {
-	return &AccountService{db: db}
+	return &AccountService{
+		accountRepo: repositories.NewAccountRepository(db),
+	}
 }
 
 func (a *AccountService) CreateAccount(ctx context.Context, account *models.Account) error {
-	return fmt.Errorf("method not implemented")
+	return a.accountRepo.CreateAccount(ctx, account)
 }

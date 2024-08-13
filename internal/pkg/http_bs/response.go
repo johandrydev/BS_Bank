@@ -19,6 +19,14 @@ func ValidateErr(w http.ResponseWriter, err error, status int) error {
 	return err
 }
 
+func WriteError(w http.ResponseWriter, status int, message string) {
+	response := structures.HttpResponse{
+		Message: message,
+	}
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(response)
+}
+
 func WriteJson(w http.ResponseWriter, status int, data any, message string) {
 	response := structures.HttpResponse{
 		Data:    data,

@@ -6,8 +6,3 @@ type Client struct {
 	Name     string
 	Accounts []*Account
 }
-
-// AddAccount adds an account to the client
-func (c *Client) AddAccount(account *Account) {
-	c.Accounts = append(c.Accounts, account)
-}

@@ -10,27 +10,26 @@ import (
 )
 
 type accountHandler struct {
-	db             *sql.DB
-	accountService services.AccountService
+	accountService services.AccountCreator
 }
 
 func NewAccountHandler(db *sql.DB) *accountHandler {
 	return &accountHandler{
-		db:             db,
-		accountService: *services.NewAccountService(db),
+		accountService: services.NewAccountService(db),
 	}
 }
 
 func (a *accountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	var accountReq structures.AccountRequest
-	if err := httpbs.ValidateErr(w, json.NewDecoder(r.Body).Decode(&accountReq), http.StatusBadRequest); err != nil {
+	err := json.NewDecoder(r.Body).Decode(&accountReq)
+	if err := httpbs.ValidateErr(w, err, http.StatusBadRequest); err != nil {
 		return
 	}
+
 	account := accountReq.ToAccount()
 	ctx := r.Context()
-	if err := httpbs.ValidateErr(w,
-		a.accountService.CreateAccount(ctx, &account),
-		http.StatusBadRequest); err != nil {
+	err = a.accountService.CreateAccount(ctx, &account)
+	if err := httpbs.ValidateErr(w, err, http.StatusBadRequest); err != nil {
 		return
 	}
 	httpbs.WriteJson(w, http.StatusCreated, account, "Account created succesfully")
