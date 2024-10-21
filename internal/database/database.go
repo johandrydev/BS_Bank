@@ -2,27 +2,26 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
+	"os"
 
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-const (
-	username = "mysql"
-	password = "mysql"
-)
-
-// create connection of database
+// CreateConnection create connection of database.
 func CreateConnection() (*sql.DB, error) {
-	cfg := mysql.Config{
-		User:   username,
-		Passwd: password,
-		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
-		DBName: "blueSoftBank",
-	}
-	db, err := sql.Open("mysql", cfg.FormatDSN())
+	log.Println("Creating connection to database")
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_PORT"), os.Getenv("MYSQL_DB"))
+	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		return nil, err
 	}
+
+	if err := db.Ping(); err != nil {
+		log.Fatalf("Error pinging database: %v\n", err)
+	}
+
+	log.Println("Connection to database created")
 	return db, nil
 }
