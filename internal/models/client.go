@@ -2,7 +2,7 @@ package models
 
 // Client represents a bank client with multiple accounts
 type Client struct {
-	ID       string
-	Name     string
-	Accounts []*Account
+	ID    string
+	Name  string
+	Email string
 }
